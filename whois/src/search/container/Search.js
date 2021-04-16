@@ -1,13 +1,14 @@
 import { Col, Row, Typography } from 'antd';
 import React from 'react';
 import Settings from '../component/Settings';
+import SearchInput from './SearchInput';
 
 function Search(){
     return (
         <>
             <Row justify="end" style={{ padding: 20 }}>
                 <Col>
-                    <Settings/>
+                    <Settings logout={() => {} }/>
                 </Col>
             </Row>
             <Row justify="center" style={{marginTop: 100}}>
@@ -18,7 +19,7 @@ function Search(){
                 </Col>
             </Row>
             <Row justify="center" style={{marginTop: 50}}>
-                <Col span={12}>검색</Col>
+                <Col span={12}><SearchInput/></Col>
             </Row>
         </>
   );
