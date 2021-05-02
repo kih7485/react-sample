@@ -12,12 +12,15 @@ import TagList from './TagList';
 export default function User({match}) {
     const history = useHistory();
     const dispatch = useDispatch();
-    const user = useSelector(state => state.user.user)
+    const user = useSelector(state => state.user.user);
+    const userHistory = useSelector(state => state.user.userHistory);
+
     const name = match.params.name;
     const { isFetched, isSlow } = useFetchInfo(Types.FetchUser);
     useEffect(() => {
         dispatch(actions.fetchUser(name));
-    }, [name]);
+        dispatch(actions.fetchUserHistory(name));
+    }, [dispatch, name]);
 
     return (
         <Row justify="center">
@@ -59,7 +62,7 @@ export default function User({match}) {
                                 <TagList/>
                             </Descriptions.Item>
                             <Descriptions.Item label="수정 내역">
-                                <History/>
+                                <History items={ userHistory}/>
                             </Descriptions.Item>
                             
                         </Descriptions>
