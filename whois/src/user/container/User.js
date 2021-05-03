@@ -4,12 +4,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import History from '../../common/component/History';
 import useFetchInfo from '../../common/hook/useFetchInfo';
+import useNeedLogin from '../../common/hook/useNeedLogin';
 import FetchLabel from '../component/FetchLabel';
 import { actions, Types } from '../state';
 import Department from './Department';
 import TagList from './TagList';
 
-export default function User({match}) {
+export default function User({ match }) {
+    useNeedLogin();
     const history = useHistory();
     const dispatch = useDispatch();
     const user = useSelector(state => state.user.user);
@@ -22,11 +24,15 @@ export default function User({match}) {
         dispatch(actions.fetchUserHistory(name));
     }, [dispatch, name]);
 
+    useEffect(() => {
+        return () => dispatch(actions.initialize());
+    }, [dispatch]);
+
     return (
         <Row justify="center">
             <Col xs={24} md={20} lg={14}>
                 <PageHeader
-                    onBack={history.goBack}
+                    onBack={() => history.push('/')}
                     title={
                         <FetchLabel
                             label="사용자 정보"
