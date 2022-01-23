@@ -21,6 +21,8 @@ export default class Controller {
   }
   reset() {
     console.log(tag, "reset");
+    this.store.reset();
+    this.searchResultView.hide();
   }
 
   render() {
