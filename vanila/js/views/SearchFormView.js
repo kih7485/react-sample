@@ -39,6 +39,7 @@ export default class SearchFormView extends View {
     this.emit("@submit", { value });
   }
   handleReset() {
+    this.showResetButton(false);
     this.emit("@reset");
   }
 }
