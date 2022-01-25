@@ -1,7 +1,8 @@
-import { qs } from "../helpers.js";
+import { delegate, on, qs, qsAll } from "../helpers.js";
 import View from "./View.js";
 
-const TabType = {
+const tags = "[TabView]";
+export const TabType = {
   KEYWORD: "KEYWORD",
   HISTORY: "HISTORY",
 };
@@ -15,10 +16,23 @@ export default class TabView extends View {
   constructor() {
     super(qs("#tab-view"));
     this.template = new Template();
+    this.bindEvnet();
   }
-  show() {
+  show(selectedTab) {
     this.element.innerHTML = this.template.getTabList();
+
+    qsAll("li", this.element).forEach((li) => {
+      li.className = li.dataset.tab === selectedTab ? "active" : "";
+    });
     super.show();
+  }
+  bindEvnet() {
+    delegate(this.element, "click", "li", (event) => this.handleClick(event));
+  }
+  handleClick(event) {
+    console.log(tags, event.target);
+    const value = event.target.dataset.tab;
+    this.emit("@change", { value });
   }
 }
 
