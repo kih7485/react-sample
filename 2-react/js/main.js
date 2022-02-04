@@ -1,4 +1,5 @@
 import store from "../js/Store.js";
+import { formatRelativeDate } from "../js/helpers.js";
 
 const TabType = {
   KEYWORD: "KEYWORD",
@@ -18,11 +19,14 @@ class App extends React.Component {
       submitted: false,
       selectedTab: TabType.KEYWORD,
       keywordList: [],
+      historyList: [],
     };
   }
   componentDidMount() {
     const keywordList = store.getKeywordList();
-    this.setState({ keywordList });
+    const historyList = store.getHistoryList();
+
+    this.setState({ keywordList, historyList });
   }
 
   handleChangeInput(event) {
@@ -53,10 +57,23 @@ class App extends React.Component {
       }
     );
   }
+  handleClickRemoveHistory(event, keyword) {
+    event.stopPropagation(); //상위 객체 이벤트 버블링 차단
+
+    store.removeHistory(keyword);
+    const historyList = store.getHistoryList();
+    this.setState({ historyList });
+  }
   search(searchKeyword) {
     const searchResult = store.search(searchKeyword);
-    this.setState({ searchKeyword, searchResult, submitted: true });
-    console.log(searchResult, "searchResult");
+    const historyList = store.getHistoryList();
+
+    this.setState({
+      searchKeyword,
+      searchResult,
+      historyList,
+      submitted: true,
+    });
   }
   render() {
     let resetButton = null;
@@ -123,6 +140,33 @@ class App extends React.Component {
         </ul>
       </>
     );
+    const historyList = (
+      <>
+        <ul className="list">
+          {this.state.historyList.map(({ id, keyword, date }, index) => {
+            return (
+              <li
+                key={id}
+                onClick={() => {
+                  return this.search(keyword);
+                }}
+              >
+                <span className="number">{index + 1}</span>
+                <span>{keyword}</span>
+                <span className="date">{formatRelativeDate(date)}</span>
+                <button
+                  className="btn-remove"
+                  onClick={(event) =>
+                    this.handleClickRemoveHistory(event, keyword)
+                  }
+                ></button>
+              </li>
+            );
+          })}
+        </ul>
+      </>
+    );
+
     const tabs = (
       <>
         <ul className="tabs">
@@ -139,7 +183,7 @@ class App extends React.Component {
           })}
         </ul>
         {this.state.selectedTab === TabType.KEYWORD && keywordList}
-        {this.state.selectedTab === TabType.HISTORY && <>최근 검색어</>}
+        {this.state.selectedTab === TabType.HISTORY && historyList}
       </>
     );
     return (
