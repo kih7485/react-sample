@@ -1,4 +1,14 @@
 import store from "../js/Store.js";
+
+const TabType = {
+  KEYWORD: "KEYWORD",
+  HISTORY: "HISTORY",
+};
+
+const TabLabel = {
+  [TabType.KEYWORD]: "추천 검색어",
+  [TabType.HISTORY]: "최근 검색어",
+};
 class App extends React.Component {
   constructor() {
     super();
@@ -6,10 +16,18 @@ class App extends React.Component {
       searchKeyword: "",
       searchResult: [],
       submitted: false,
+      selectedTab: TabType.KEYWORD,
+      keywordList: [],
     };
   }
+  componentDidMount() {
+    const keywordList = store.getKeywordList();
+    this.setState({ keywordList });
+  }
+
   handleChangeInput(event) {
     const searchKeyword = event.target.value;
+    console.log(searchKeyword, "searchKeyword");
     if (searchKeyword.length <= 0) {
       return this.handleReset();
     }
@@ -27,7 +45,7 @@ class App extends React.Component {
   handleReset() {
     this.setState(
       () => {
-        return { searchKeyword: "" };
+        return { searchKeyword: "", submitted: false };
       },
       () => {
         //callback
@@ -35,9 +53,9 @@ class App extends React.Component {
       }
     );
   }
-  search(keyword) {
-    const searchResult = store.search(keyword);
-    this.setState({ searchResult, submitted: true });
+  search(searchKeyword) {
+    const searchResult = store.search(searchKeyword);
+    this.setState({ searchKeyword, searchResult, submitted: true });
     console.log(searchResult, "searchResult");
   }
   render() {
@@ -86,6 +104,44 @@ class App extends React.Component {
       ) : (
         <div className="empty-box">검색 결과가 없습니다.</div>
       );
+    const keywordList = (
+      <>
+        <ul className="list">
+          {this.state.keywordList.map(({ id, keyword }, index) => {
+            return (
+              <li
+                key={id}
+                onClick={() => {
+                  return this.search(keyword);
+                }}
+              >
+                <span className="number">{index + 1}</span>
+                <span>{keyword}</span>
+              </li>
+            );
+          })}
+        </ul>
+      </>
+    );
+    const tabs = (
+      <>
+        <ul className="tabs">
+          {Object.values(TabType).map((tabType) => {
+            return (
+              <li
+                className={this.state.selectedTab === tabType ? "active" : ""}
+                key={tabType}
+                onClick={() => this.setState({ selectedTab: tabType })}
+              >
+                {TabLabel[tabType]}
+              </li>
+            );
+          })}
+        </ul>
+        {this.state.selectedTab === TabType.KEYWORD && keywordList}
+        {this.state.selectedTab === TabType.HISTORY && <>최근 검색어</>}
+      </>
+    );
     return (
       <>
         <header>
@@ -93,7 +149,10 @@ class App extends React.Component {
         </header>
         <div className="container">
           {searchForm}
-          <div className="contetnt">{this.state.submitted && searchResult}</div>
+
+          <div className="contetnt">
+            {this.state.submitted ? searchResult : tabs}
+          </div>
         </div>
       </>
     );
