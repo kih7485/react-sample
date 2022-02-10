@@ -1,23 +1,27 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-function SearchForm() {
-    const [state, setState]  = useState({searchKeyword:""})
+function SearchForm({value, onChange, onReset, onSubmit}) {
+    const handleSubmit = event => {
+        event.preventDefault();
+        console.log(event, "target")
+        onSubmit();
+    }
+    const handleReset = () => {
+        onReset();
+    }
     const handleChangeInput = (event) => {
-        const searchKeyword = event.target.value;
-        setState({searchKeyword});
+        onChange(event.target.value);
     } 
-    
     return (
-        <form>
-        <input
-          type="text"
-          placeholder="검색어를 입력하세요."
-          autoFocus
-          value={state.searchKeyword}
-          onChange={(event) => {
-            handleChangeInput(event);
-          }}
-        />
+        <form onSubmit={handleSubmit} onReset={handleReset}>
+            <input
+                type="text"
+                placeholder="검색어를 입력하세요."
+                autoFocus
+                value={value}
+                onChange={handleChangeInput}
+            />
+            {value?.length > 0 && (<button type="reset" className="btn-reset" onClick={handleReset} />)}
         </form>
     );
 }
