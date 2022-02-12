@@ -3,8 +3,7 @@ import React from 'react';
 function SearchForm({value, onChange, onReset, onSubmit}) {
     const handleSubmit = event => {
         event.preventDefault();
-        console.log(event, "target")
-        onSubmit();
+        onSubmit(event.target[0].value);
     }
     const handleReset = () => {
         onReset();
