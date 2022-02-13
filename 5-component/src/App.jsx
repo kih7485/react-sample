@@ -5,6 +5,7 @@ import SearchResult from './components/SearchResult'
 import store from '../src/Store.js'
 import Tabs, { TabType } from './components/Tabs'
 import KeywordList from './components/KeywordList'
+import HistoryList from './components/HistoryList'
 function App() {
   const [state, setState] = useState({
     searchKeyword: ""
@@ -43,7 +44,7 @@ function App() {
             <>
               <Tabs selectedTab={state.selectedTab} onChange={(selectedTab) => setState(state => ({ ...state, selectedTab }))} />
               {state.selectedTab === TabType.KEYWORD && <KeywordList onClick={(keyword) => search(keyword)}/>}
-              {state.selectedTab === TabType.HISTORY && <>Todo: 최근검색어</>}
+              {state.selectedTab === TabType.HISTORY && <HistoryList onClick={(keyword) => search(keyword)}/>}
             </>
           }
       </div>
